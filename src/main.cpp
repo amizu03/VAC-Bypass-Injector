@@ -1,4 +1,4 @@
-#include "global.hpp"
+#include "util.hpp"
 
 int main( ) {
     using namespace global;
@@ -26,16 +26,17 @@ int main( ) {
     if ( !handle::window )
         return error( "Failed to find remote process window." );
 
-    DWORD pid = 0;
-    GetWindowThreadProcessId( handle::window, &pid );
+    GetWindowThreadProcessId( handle::window, &info::pid );
 
-    if ( !pid )
+    if ( !info::pid )
         return error( "Failed to retrieve remote process ID." );
 
-    handle::proc = OpenProcess( PACCESS_RIGHTS, false, pid );
+    handle::proc = OpenProcess( PACCESS_RIGHTS, false, info::pid );
 
     if ( handle::proc == INVALID_HANDLE_VALUE )
         return error( "Failed to open handle to remote process." );
+
+    modules::enumerate( );
 
     alloc::dll_path = VirtualAllocEx( handle::proc, nullptr, path.size( ), MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE );
 
@@ -48,12 +49,31 @@ int main( ) {
     if ( !bytes_written || !status )
         return error( "Failed to write DLL path to remote process memory." );
 
-    /* bypass NtOpenFile and NtQueryInformationThread hook to allow LoadLibrary and manualmap injection and prevent thread from being queried */
+    /* bypass NtOpenFile hook to allow LoadLibrary calls to pass through and not be queried */
     std::vector<uint8_t> o_NtOpenFile {};
-    std::vector<uint8_t> o_NtQueryInformationThread {};
-
     const auto o_prot_NtOpenFile = nt::unhook( "NtOpenFile", o_NtOpenFile );
-    const auto o_prot_NtQueryInformationThread = nt::unhook( "NtQueryInformationThread", o_NtQueryInformationThread );
+
+    /* bypass thread creation detection */
+    auto thread_detection = util::pattern( "client.dll", "FF 15 ? ? ? ? ? ? ? ? ? ? 6A 00 6A 04" ).add( 10 );
+    uint8_t backup_byte;
+
+    SIZE_T bytes_read = 0;
+    status = ReadProcessMemory( handle::proc, thread_detection.get<void*>( ), &backup_byte, sizeof( backup_byte ), &bytes_read );
+
+    if ( !bytes_read || !status )
+        return error( "Failed backup anti-thread creation instructions." );
+
+    if ( backup_byte != 0x74 ) {
+        TerminateProcess( handle::proc, 9 );
+        return error( "Injector is outdated (DO NOT USE); anti-thread creation has changed since last update.\nTerminating injector and target process." );
+    }
+
+    uint8_t replacement_byte = 0xEB;
+    bytes_written = 0;
+    status = WriteProcessMemory( handle::proc, thread_detection.get<void*>( ), &replacement_byte, sizeof( replacement_byte ), &bytes_written );
+
+    if ( !bytes_written || !status )
+        return error( "Failed to patch anti-thread creation." );
 
     /* create thread to initialize injected module */
     handle::thread = CreateRemoteThread( handle::proc, nullptr, 0, reinterpret_cast< LPTHREAD_START_ROUTINE >( LoadLibraryA ), alloc::dll_path, 0, nullptr );
@@ -66,7 +86,13 @@ int main( ) {
 
     /* restore anticheat hooks so it doesn't get too suspicious */
     nt::rehook( "NtOpenFile", o_NtOpenFile, o_prot_NtOpenFile );
-    nt::rehook( "NtQueryInformationThread", o_NtQueryInformationThread, o_prot_NtQueryInformationThread );
+
+    /* restore thread detection so it doesn't look too suspicious */
+    bytes_written = 0;
+    status = WriteProcessMemory( handle::proc, thread_detection.get<void*>( ), &backup_byte, sizeof( backup_byte ), &bytes_written );
+
+    if ( !bytes_written || !status )
+        return error( "Failed to restore anti-thread creation." );
 
     free_resources( );
 

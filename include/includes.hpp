@@ -6,3 +6,5 @@
 #include <array>
 #include <string>
 #include <filesystem>
+#include <map>
+#include <tlhelp32.h>

@@ -1,3 +1,6 @@
 {
-    "deepcode.uploadApproved": true
+    "deepcode.uploadApproved": true,
+    "files.associations": {
+        "xtree": "cpp"
+    }
 }
