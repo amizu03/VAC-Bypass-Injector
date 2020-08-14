@@ -11,6 +11,6 @@ namespace global
 
     namespace alloc
     {
-        void *dll_path = nullptr;
+        void* dll_path = nullptr;
     } // namespace alloc
 } // namespace global

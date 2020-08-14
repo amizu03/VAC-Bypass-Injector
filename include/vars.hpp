@@ -12,6 +12,6 @@ namespace global
 
     namespace alloc
     {
-        extern void *dll_path;
+        extern void* dll_path;
     } // namespace alloc
 } // namespace global
