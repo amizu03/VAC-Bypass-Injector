@@ -22,7 +22,7 @@ namespace global {
                     return;
                 }
 
-                if ( *reinterpret_cast< std::uint8_t* >( pat1 ) == '\?' || game_dat [ current_address ] == get_byte( pat1 ) ) {
+                if ( *reinterpret_cast< std::uint8_t* >( pat1 ) == '\?' || game_dat [ current_address ] == get_byte( reinterpret_cast< uint8_t* > ( pat1 ) ) ) {
                     if ( !first_match )
                         first_match = current_address;
 

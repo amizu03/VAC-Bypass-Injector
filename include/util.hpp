@@ -3,18 +3,15 @@
 
 namespace global {
     namespace util {
-        template <typename type>
-        constexpr auto in_range( const type& x, const type& a, const type& b ) {
+        constexpr bool in_range( const uint8_t x, const uint8_t a, const uint8_t b ) {
             return x >= a && x <= b;
         }
 
-        template <typename type>
-        constexpr auto get_bits( const type& x ) {
+        constexpr uint8_t get_bits( const uint8_t x ) {
             return in_range( ( x & ( ~0x20 ) ), 'A', 'F' ) ? ( ( x & ( ~0x20 ) ) - 'A' + 0xA ) : ( in_range( x, '0', '9' ) ? x - '0' : 0 );
         }
 
-        template <typename type>
-        constexpr auto get_byte( const type& x ) {
+        constexpr uint8_t get_byte( const uint8_t* x ) {
             return get_bits( x [ 0 ] ) << 4 | get_bits( x [ 1 ] );
         }
 
