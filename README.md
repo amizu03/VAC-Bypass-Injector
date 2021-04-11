@@ -11,8 +11,10 @@ USAGE: Place DLL to inject in same directory as injector. Run injector, and it w
 1. MSVC VS 2019 C++ Build Tools or newer.
 2. Project settings that support the c++17 language standard or newer.
 
-# Usage
+# Usage (YOU DO NOT NEED A VS SOLUTION)
 1. Clone the repository or download the source files to your computer.
-2. Run the .bat file to build the project. A separate .exe file will be generated in a new "bin" folder.
-3. Copy your DLL into the directory or copy the injector into a directory with your DLL.
-4. Open CS:GO and run the injector **(AS ADMINISTRATOR)**. It will inject the first DLL it finds in the working directory.
+2. Extract the folder inside the zip file if you downloaded the source directly.
+3. Create a "bin" folder in the "VAC-Bypass-Injector-master" directory
+4. Run the .bat file to build the project. A separate .exe file will be generated in a new "bin" folder.
+5. Copy your DLL into the directory or copy the injector into a directory with your DLL.
+6. Open CS:GO and run the injector **(AS ADMINISTRATOR)**. It will inject the first DLL it finds in the working directory.
