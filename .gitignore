@@ -33,3 +33,9 @@
 
 # Debug Database
 .pdb
+
+# Folders
+.vs
+bin
+Release
+Debug
