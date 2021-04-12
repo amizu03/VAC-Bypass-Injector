@@ -21,8 +21,13 @@ USAGE: Place DLL to inject in same directory as injector. Run injector, and it w
 6. Open CS:GO and run the injector **(AS ADMINISTRATOR)**. It will inject the first DLL it finds in the working directory.
 
 # VS SOLUTION
-1-3. See FAST SETUP.
-4a. Open the VS Solution provided, and make sure you compile in Release OR Debug x86 ONLY.
-4b. Go to your project's Configuration Properties->General->C++ Language Standard and make sure that it is set to C++17 or newer. 
-4c. Go to project's Configuration Properties->VC++ Directories->Include Directories and make sure they are set correctly (include folder should be there by default).
-5-6. See FAST SETUP.
+1. See FAST SETUP.
+2. See FAST SETUP.
+3. See FAST SETUP.
+4. Open the VS Solution provided, and make sure you compile in Release OR Debug x86 ONLY.
+5. Go to your project's Configuration Properties->General->C++ Language Standard and make sure that it is set to C++17 or newer. 
+6. Go to project's Configuration Properties->VC++ Directories->Include Directories and make sure they are set correctly (include folder should be there by default).
+7. See steps in FAST SETUP, 5-6.
+
+# LICENSE
+MIT LICENSE (read https://tldrlegal.com/license/mit-license)
